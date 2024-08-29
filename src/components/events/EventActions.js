@@ -6,8 +6,7 @@ const EventActions = props => {
         return(
             <button key={eve.what + i} className={`bg-${props.color} w-min text-white
                 px-3 my-3 cursor-pointer rounded-md font-medium
-                flex flex-row items-center whitespace-nowrap functionButton`}
-                onClick={() => {}}>
+                flex flex-row items-center whitespace-nowrap functionButton`}>
                 <span>when</span>
                 {eve.what == 'flag' ?
                 <Icon name="flag" className="text-green-600 mx-2" /> :

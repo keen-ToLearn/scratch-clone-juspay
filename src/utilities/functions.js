@@ -65,7 +65,7 @@ export const lookFunctions = [
     }, {
         what: 'resize',
         definite: false,
-        by: 10
+        to: 10
     }
 ];
 
@@ -80,8 +80,10 @@ export const controlFunctions = [
         for: 1
     }, {
         what: 'repeat',
-        times: 10
+        times: 10,
+        actionData: []
     }, {
-        what: 'forever'
+        what: 'forever',
+        actionData: []
     }
 ];
