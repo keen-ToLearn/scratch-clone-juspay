@@ -1,0 +1,67 @@
+body {
+    cursor: default;
+}
+
+::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #e7e7e7;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #d5d5d5;
+}
+
+.playground {
+    height: calc(100vh - 4rem);
+}
+
+input[type=number] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.functionInput {
+    width: 3rem;
+    border-radius: 5px;
+}
+
+.functionInput:focus {
+    outline-style: none;
+}
+
+.funcInputText {
+    width: 5rem;
+    border-radius: 5px;
+}
+
+.functionInput:focus {
+    outline-style: none;
+}
+
+.functionButton {
+    display: block;
+    height: 36px;
+}
+
+.functionButton:focus:active {
+    transform: scale(0.98);
+}
+
+.loopButton {
+    display: block;
+}
+
+.loopButton:focus:active {
+    transform: scale(0.98);
+}
