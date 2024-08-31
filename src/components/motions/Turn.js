@@ -1,9 +1,13 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import Icon from "../visual/Icon";
 import { SpriteActionsContext } from "../../contexts/SpriteActionsContext";
+import { CombinationContext } from "../../contexts/CombinationContext";
 
 const Turn = props => {
-    const { spriteMotionTrigger } = useContext(SpriteActionsContext);
+    const { spriteMotionTrigger, pickBlock, initializeBlockPos } = useContext(SpriteActionsContext);
+    const { isCombo, updateComboPin } = useContext(CombinationContext);
+
+    const turnTimerRef = useRef(null);
 
     const [turnBy, setTurnBy] = useState(props.deg);
 
@@ -11,13 +15,32 @@ const Turn = props => {
 
     return(
         <button className={`bg-${props.color} w-min text-white
-            px-3 my-3 cursor-pointer rounded-md font-medium
+            px-3 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
             flex flex-row items-center functionButton`}
             onClick={() => {
-                spriteMotionTrigger({
-                    what: 'turn',
-                    options: { dir: props.dir, deg: turnBy, reset: props.reset }
-                })
+                if(!isCombo)
+                    spriteMotionTrigger({
+                        what: 'turn',
+                        options: { dir: props.dir, deg: turnBy, reset: props.reset }
+                    })
+            }}
+            onMouseDown={event => {
+                turnTimerRef.current = setTimeout(() => {
+                    initializeBlockPos(event.clientX, event.clientY)
+
+                    if(isCombo)
+                        updateComboPin(props.index, false)
+                    else
+                        pickBlock([{
+                            what: 'turn',
+                            options: { dir: props.dir, deg: turnBy, reset: props.reset }
+                        }])
+                }, 300)
+            }}
+            onMouseUp={event => {
+                clearTimeout(turnTimerRef.current)
+                if(isCombo)
+                    updateComboPin(props.index, false, true)
             }}>
             {props.reset ?
             <>

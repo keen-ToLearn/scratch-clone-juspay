@@ -15,8 +15,11 @@ import DragBlock from "./DragBlock";
 import { SpriteActionsContext } from "../contexts/SpriteActionsContext";
 import { gotoTrigger, moveTrigger, turnTrigger } from "../utilities/motionHandlers";
 import { costumeTrigger, resizeTrigger, speakTrigger } from "../utilities/lookHandlers";
+import CostumeArea from "./layout/CostumeArea";
+import { pinCombinationsUpdator, pinnedBlockExtractor, updateCombinationHelper } from "../utilities/combinationHelpers";
 
 const CodeEditor = () => {
+    // editor states like - Run, Stop, change Section
     const [run, setRun] = useState(false);
     const [section, setSection] = useState(0); // 0 - Code, 1 - Costume, 2 - Replay
 
@@ -44,16 +47,26 @@ const CodeEditor = () => {
     const [speak, setSpeak] = useState(null);
     const [spriteSize, setSpriteSize] = useState(1);
 
-    // item drag related
-    const [block, setBlock] = useState(null)
-    const [blockAt, setBlockAt] = useState({ x: 0, y: 0 })
+    // block drag related
+    const [block, setBlock] = useState(null);
+    const [blockAt, setBlockAt] = useState({ x: 0, y: 0 });
 
+    const [combinations, setCombinations] = useState([]);
+    const [combinationPinned, setCombinationPinned] = useState(null);
+
+    // methods for editor states like Run, Section change
     const triggerRun = () => { setRun(true) }
     const stopRun = () => { setRun(false) }
 
     const changeSection = sec => { setSection(sec) }
 
     // costume related methods, update list, change sprite
+    const addCostume = newCostume => {
+        setCostumes(costumes => [ ...costumes, () => (
+            <img src={newCostume} alt="newCostume" />
+        ) ])
+    }
+
     const changeCostume = to => {
         if(to < costumes.length)
             setInUse(to)
@@ -87,6 +100,8 @@ const CodeEditor = () => {
     // block methods, that is being dragged
     const pickBlock = block => { setBlock(block) }
 
+    const initializeBlockPos = (xPos, yPos) => { setBlockAt({ x: xPos, y: yPos }) }
+
     const handleBlockMove = event => {
         if(block)
             setBlockAt({ x: event.clientX, y: event.clientY })
@@ -95,6 +110,37 @@ const CodeEditor = () => {
     const handleBlockReleaseOutsideDrop = event => {
         pickBlock(null)
         setBlockAt({ x: 0, y: 0 })
+
+        if(combinationPinned != null)
+            pinTheCombination(null)
+    }
+
+    const createCombination = combination => {
+        setCombinations(combinations => [ ...combinations, combination ])
+    }
+
+    const pinTheCombination = combination => {
+        setCombinationPinned(combination)
+        
+        if(combination) {
+            // set the block, also update the combinations
+            let pinnedComboBlock = JSON.parse(JSON.stringify(combinations[combination.combId]))
+            pickBlock(pinnedBlockExtractor(pinnedComboBlock, combination))
+
+            let newCombinations = JSON.parse(JSON.stringify(combinations))
+            setCombinations(pinCombinationsUpdator(newCombinations, combination))
+        }
+    }
+
+    const releasePinOnCombination = combo => {
+        // use block and combo to add block in correct combo
+        if(!block || ['flag', 'sprite'].includes(block[0].what))
+            return
+        
+        let updatedComboList = JSON.parse(JSON.stringify(combinations))
+        
+        setCombinations(updateCombinationHelper(updatedComboList, combo, block))
+        handleBlockReleaseOutsideDrop()
     }
 
     // action methods - motion, looks, control, events
@@ -156,7 +202,7 @@ const CodeEditor = () => {
                 
                 {section == 0 &&
                 <div className="ml-auto mr-5 cursor-pointer" onClick={triggerRun}>
-                    <Icon name="play" className="text-green-600" />
+                    <Icon name="flag" className="text-green-600" />
                 </div>}
                 {section == 0 &&
                 <div className="mr-12 cursor-pointer" onClick={stopRun}>
@@ -169,11 +215,17 @@ const CodeEditor = () => {
                 <div className="flex-1 overflow-hidden flex flex-row bg-white border-t border-r border-gray-200 rounded-r-xl mr-1">
                     <SpriteActionsContext.Provider value={{
                         spriteMotionTrigger: (func) => spriteMotionTrigger(func),
-                        spriteLooksTrigger: (func) => spriteLooksTrigger(func)
+                        spriteLooksTrigger: (func) => spriteLooksTrigger(func),
+                        pickBlock: (block) => pickBlock(block),
+                        initializeBlockPos: (xPos, yPos) => initializeBlockPos(xPos, yPos)
                     }}>
-                        <Sidebar pickBlock={block => pickBlock(block)} />
+                        <Sidebar />
+                        <MidArea block={block} combinations={combinations}
+                            createCombination={combination => createCombination(combination)}
+                            pinTheCombination={combination => pinTheCombination(combination)}
+                            pickBlock={block => pickBlock(block)}
+                            releasePinOnCombination={combo => releasePinOnCombination(combo)} />
                     </SpriteActionsContext.Provider>
-                    <MidArea block={block} />
                 </div>
                 <div className="w-1/3 overflow-hidden flex flex-row bg-white border-t border-l border-gray-200 rounded-l-xl ml-1">
                     <PreviewArea costumes={costumes} inUse={inUse} spriteAt={spriteAt}
@@ -183,13 +235,18 @@ const CodeEditor = () => {
                 </div>
                 {block != null &&
                     <div className="absolute" style={{
-                        top: blockAt.x,
-                        left: blockAt.y,
+                        top: blockAt.y + 2,
+                        left: blockAt.x + 2,
                     }}>
                         <DragBlock block={block} />
                     </div>}
             </div> : (section == 1 ?
-            <div className="playground flex flex-row"></div> :
+            <div className="playground flex flex-row">
+                <div className="flex-1 h-full overflow-auto flex flex-row bg-white border-t border-r border-gray-200 rounded-r-xl mr-4">
+                    <CostumeArea costumes={costumes} addCostume={newCostume => addCostume(newCostume)}
+                        inUse={inUse} changeCostume={to => changeCostume(to)} />
+                </div>
+            </div> :
             <div className="playground flex flex-row"></div>)}
         </div>
     );

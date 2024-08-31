@@ -1,16 +1,41 @@
-import React, { useState } from "react";
+import React, { useContext, useRef, useState } from "react";
+import { SpriteActionsContext } from "../../contexts/SpriteActionsContext";
+import DragBlock from "../DragBlock";
+import { CombinationContext } from "../../contexts/CombinationContext";
 
 const Loop = props => {
+    const { pickBlock, initializeBlockPos } = useContext(SpriteActionsContext);
+    const { isCombo, updateComboPin } = useContext(CombinationContext);
+
+    const loopTimerRef = useRef(null);
+
     const [repeatTime, setRepeatTime] = useState(props.times);
-    const [actionData, setActionData] = useState(props.actionData ? props.actionData : []);
 
     const modifyRepeatTime = change => { setRepeatTime(change) }
-    const organizeActionData = () => { setActionData(actionData) }
 
     return(
         <button className={`bg-${props.color} w-min text-white
-            py-2 my-3 cursor-pointer rounded-md font-medium
-            flex flex-col whitespace-nowrap loopButton`}>
+            py-2 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
+            flex flex-col whitespace-nowrap loopButton`}
+            onMouseDown={event => {
+                loopTimerRef.current = setTimeout(() => {
+                    initializeBlockPos(event.clientX, event.clientY)
+
+                    if(isCombo)
+                        updateComboPin(props.index, false, false)
+                    else
+                        pickBlock([{
+                            what: props.what,
+                            actionData: props.actionData,
+                            times: repeatTime
+                        }])
+                }, 300)
+            }}
+            onMouseUp={event => {
+                clearTimeout(loopTimerRef.current)
+                if(isCombo)
+                    updateComboPin(props.index, false, false)
+            }}>
             {props.what == 'repeat' ?
             <div className="flex flex-row items-center px-3">
                 <span>repeat</span>
@@ -19,8 +44,11 @@ const Loop = props => {
                     onClick={event => event.stopPropagation()} min={0}/>
             </div> :
             <span className="px-3">forever</span>}
-            {actionData.length == 0 &&
-            <div className="bg-white ml-3 mt-2 mb-3 self-stretch">{'blank'}</div>}
+            {props.actionData.length == 0 ?
+                <div className="bg-white ml-3 mt-2 mb-3 self-stretch">{'blank'}</div> :
+                <div className="ml-3 mt-2 mb-3">
+                    <DragBlock block={props.actionData} />
+                </div>}
         </button>
     );
 }

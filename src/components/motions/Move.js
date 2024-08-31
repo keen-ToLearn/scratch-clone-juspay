@@ -1,9 +1,13 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import Icon from "../visual/Icon";
 import { SpriteActionsContext } from "../../contexts/SpriteActionsContext";
+import { CombinationContext } from "../../contexts/CombinationContext";
 
 const Move = props => {
-    const { spriteMotionTrigger } = useContext(SpriteActionsContext);
+    const { spriteMotionTrigger, pickBlock, initializeBlockPos } = useContext(SpriteActionsContext);
+    const { isCombo, updateComboPin } = useContext(CombinationContext);
+
+    const moveTimerRef = useRef(null);
 
     const [moveBy, setMoveBy] = useState(props.units);
 
@@ -11,15 +15,34 @@ const Move = props => {
 
     return(
         <button className={`bg-${props.color} w-min text-white
-            px-3 my-3 cursor-pointer rounded-md font-medium
+            px-3 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
             flex flex-row items-center functionButton`}
             onClick={() => {
-                spriteMotionTrigger({
-                    what: 'move',
-                    options: { dir: props.dir, units: moveBy }
-                })
+                if(!isCombo)
+                    spriteMotionTrigger({
+                        what: 'move',
+                        options: { dir: props.dir, units: moveBy }
+                    })
             }}
-            onMouseDown={() => { console.log('mouse downed') }}>
+            onMouseDown={event => {
+                // propagate mouse down upwards if isCombo
+                moveTimerRef.current = setTimeout(() => {
+                    initializeBlockPos(event.clientX, event.clientY)
+                    
+                    if(isCombo)
+                        updateComboPin(props.index, false)
+                    else
+                        pickBlock([{
+                            what: 'move',
+                            options: { dir: props.dir, units: moveBy }
+                        }])
+                }, 300)
+            }}
+            onMouseUp={event => {
+                clearTimeout(moveTimerRef.current)
+                if(isCombo)
+                    updateComboPin(props.index, false, true)
+            }}>
             <span>move</span>
             {props.dir != 'm' &&
                 <Icon name={

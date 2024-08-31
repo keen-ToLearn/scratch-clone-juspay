@@ -13,7 +13,7 @@ const PreviewArea = props => {
 
     const handleSpriteMove = event => {
         let isInBounds = checkLimit(event.clientX, event.clientY, bounds)
-console.log(props.spritePinned)
+        
         if(props.spritePinned && isInBounds) {
             props.updateSpritePos({
                 x: event.clientX - bounds.least.x,
