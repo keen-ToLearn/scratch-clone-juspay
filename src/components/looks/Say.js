@@ -18,7 +18,7 @@ const Say = props => {
     return(
         <button className={`bg-${props.color} w-min text-white
             px-3 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
-            flex flex-row items-center functionButton`}
+            flex flex-row items-center functionButton ${isCombo ? 'border border-purple-200' : ''}`}
             onClick={() => {
                 if(!isCombo)
                     spriteLooksTrigger({

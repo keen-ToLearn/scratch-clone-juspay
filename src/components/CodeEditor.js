@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Sidebar from "./layout/Sidebar";
 import MidArea from "./layout/MidArea";
 import PreviewArea from "./layout/PreviewArea";
@@ -17,6 +17,14 @@ import { gotoTrigger, moveTrigger, turnTrigger } from "../utilities/motionHandle
 import { costumeTrigger, resizeTrigger, speakTrigger } from "../utilities/lookHandlers";
 import CostumeArea from "./layout/CostumeArea";
 import { pinCombinationsUpdator, pinnedBlockExtractor, updateCombinationHelper } from "../utilities/combinationHelpers";
+import { categories } from "../utilities/categories";
+import { waitForSprite } from "../utilities/controlHandlers";
+
+let spriteAt = {
+    x: 0,
+    y: 0,
+    deg: 0
+}
 
 const CodeEditor = () => {
     // editor states like - Run, Stop, change Section
@@ -36,16 +44,13 @@ const CodeEditor = () => {
     const [inUse, setInUse] = useState(0);
 
     // sprite related
-    const [spriteAt, setSpriteAt] = useState({
-        x: 0,
-        y: 0,
-        deg: 0
-    });
     const [spriteClicked, setSpriteClicked] = useState(false);
     const [spritePinned, setSpritePinned] = useState(false);
 
     const [speak, setSpeak] = useState(null);
     const [spriteSize, setSpriteSize] = useState(1);
+
+    const [updateCount, setUpdateCount] = useState(0);
 
     // block drag related
     const [block, setBlock] = useState(null);
@@ -55,8 +60,14 @@ const CodeEditor = () => {
     const [combinationPinned, setCombinationPinned] = useState(null);
 
     // methods for editor states like Run, Section change
-    const triggerRun = () => { setRun(true) }
-    const stopRun = () => { setRun(false) }
+    const triggerRun = () => {
+        setRun(true)
+        sessionStorage.setItem('run', true)
+    }
+    const stopRun = () => {
+        setRun(false)
+        sessionStorage.setItem('run', false)
+    }
 
     const changeSection = sec => { setSection(sec) }
 
@@ -73,12 +84,16 @@ const CodeEditor = () => {
     }
 
     // methods related to sprite
-    const updateSpritePos = to => {
-        setSpriteAt(pos => ({ ...pos,
-            x: to.x,
-            y: to.y,
-            deg: to.deg
-        }))
+    const updateSpritePos = (to, checkRun) => {
+        if(!checkRun || JSON.parse(sessionStorage.getItem('run'))) {
+            spriteAt = { ...spriteAt,
+                x: to.x,
+                y: to.y,
+                deg: to.deg
+            }
+        }
+
+        setUpdateCount(updateCount => ((updateCount + 1) % 100))
     }
 
     const clickTheSprite = () => {
@@ -144,7 +159,7 @@ const CodeEditor = () => {
     }
 
     // action methods - motion, looks, control, events
-    const spriteMotionTrigger = func => {
+    const spriteMotionTrigger = (func, checkRun) => {
         let spritePos = null
 
         if(func.what == 'move')
@@ -154,7 +169,7 @@ const CodeEditor = () => {
         else
             spritePos = gotoTrigger(spriteAt, func.options)
         
-        updateSpritePos(spritePos)
+        updateSpritePos(spritePos, checkRun)
     }
 
     const spriteLooksTrigger = async (func) => {
@@ -167,6 +182,56 @@ const CodeEditor = () => {
             changeCostume(costumeTrigger(func.next, func.which, costumes.length, inUse))
         else
             resizeSprite(resizeTrigger(spriteSize, func.definite, func.to))
+    }
+
+    const getNextInRunLoop = i => {
+        return new Promise(resolve => {
+            setTimeout(() => { resolve(i + 1) }, 50)
+        })
+    }
+
+    const spriteControlTrigger = async (func) => {
+        if(func.what == 'wait')
+            await waitForSprite(func.for)
+        else if(func.what == 'forever')
+            while(JSON.parse(sessionStorage.getItem('run')))
+                await runByBlockClick(func.actionData, true)
+        else {
+            for(let i = 0; i < func.times; ) {
+                await runByBlockClick(func.actionData, true)
+                i = await getNextInRunLoop(i)
+            }
+        }
+    }
+
+    const checkWhatAndRun = async (func, checkRun) => {
+        if(categories[0].subTypes.includes(func.what)) // motion
+            spriteMotionTrigger(func, checkRun)
+        else if(categories[1].subTypes.includes(func.what)) // looks
+            await spriteLooksTrigger(func)
+        else if(categories[3].subTypes.includes(func.what)) // control
+            await spriteControlTrigger(func)
+    }
+
+    const runByBlockClick = async (block, repeat) => {
+        if(!repeat)
+            triggerRun()
+        
+        let func = null
+        let checkRun = repeat
+        
+        for(let i = 0; i < block.length; ) {
+            if(i == 5)
+                checkRun = true
+
+            func = block[i]
+            await checkWhatAndRun(func, checkRun)
+
+            i = await getNextInRunLoop(i)
+        }
+
+        if(!repeat)
+            stopRun()
     }
 
     return (
@@ -224,12 +289,14 @@ const CodeEditor = () => {
                             createCombination={combination => createCombination(combination)}
                             pinTheCombination={combination => pinTheCombination(combination)}
                             pickBlock={block => pickBlock(block)}
-                            releasePinOnCombination={combo => releasePinOnCombination(combo)} />
+                            releasePinOnCombination={combo => releasePinOnCombination(combo)}
+                            runByBlockClick={(block, repeat) => runByBlockClick(block, repeat)} />
                     </SpriteActionsContext.Provider>
                 </div>
                 <div className="w-1/3 overflow-hidden flex flex-row bg-white border-t border-l border-gray-200 rounded-l-xl ml-1">
                     <PreviewArea costumes={costumes} inUse={inUse} spriteAt={spriteAt}
-                        updateSpritePos={to => updateSpritePos(to)} clickTheSprite={() => clickTheSprite()}
+                        updateSpritePos={(to, checkRun) => updateSpritePos(to, checkRun)}
+                        clickTheSprite={() => clickTheSprite()}
                         pinTheSprite={should => pinTheSprite(should)} spritePinned={spritePinned}
                         speak={speak} spriteSize={spriteSize} />
                 </div>

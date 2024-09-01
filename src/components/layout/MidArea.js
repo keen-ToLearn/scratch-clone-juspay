@@ -116,7 +116,8 @@ const MidArea = props => {
                 event.stopPropagation()
                 clearTimeout(dragTimerRef.current)
                 updateComboPin(i, true, true)
-            }}>
+            }}
+            onClick={event => props.runByBlockClick(combination.block, false)}>
                 <DragBlock block={combination.block} />
             </div>
         );

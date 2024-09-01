@@ -16,7 +16,7 @@ const Loop = props => {
     return(
         <button className={`bg-${props.color} w-min text-white
             py-2 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
-            flex flex-col whitespace-nowrap loopButton`}
+            flex flex-col whitespace-nowrap loopButton ${isCombo ? 'border border-red-200' : ''}`}
             onMouseDown={event => {
                 loopTimerRef.current = setTimeout(() => {
                     initializeBlockPos(event.clientX, event.clientY)

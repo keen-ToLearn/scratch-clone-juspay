@@ -10,7 +10,7 @@ export const WhenFlag = ({ color, index }) => {
     const flagTimerRef = useRef(null);
 
     return(
-        <button className={`bg-${color} w-min text-white
+        <button className={`bg-${color} w-min text-white ${isCombo ? 'border border-yellow-200' : ''}
             px-3 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
             flex flex-row items-center whitespace-nowrap functionButton`}
             onMouseDown={event => {
@@ -42,7 +42,7 @@ export const WhenSprite = ({ color, index }) => {
     const spriteTimerRef = useRef(null);
 
     return(
-        <button className={`bg-${color} w-min text-white
+        <button className={`bg-${color} w-min text-white ${isCombo ? 'border border-yellow-200' : ''}
             px-3 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
             flex flex-row items-center whitespace-nowrap functionButton`}
             onMouseDown={event => {

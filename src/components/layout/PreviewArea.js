@@ -11,6 +11,8 @@ const PreviewArea = props => {
         most: { x: 0, y: 0 }
     });
 
+    const [spriteAt, setSpriteAt] = useState(props.spriteAt);
+
     const handleSpriteMove = event => {
         let isInBounds = checkLimit(event.clientX, event.clientY, bounds)
         
@@ -18,7 +20,12 @@ const PreviewArea = props => {
             props.updateSpritePos({
                 x: event.clientX - bounds.least.x,
                 y: event.clientY - bounds.least.y,
-                deg: props.spriteAt.deg
+                deg: spriteAt.deg
+            }, false)
+            setSpriteAt({
+                x: event.clientX - bounds.least.x,
+                y: event.clientY - bounds.least.y,
+                deg: spriteAt.deg
             })
         }
     }
@@ -36,14 +43,18 @@ const PreviewArea = props => {
         }
     }, [])
 
+    useEffect(() => {
+        setSpriteAt(props.spriteAt)
+    }, [props.spriteAt])
+
     return (
         <div className="flex-1 h-full relative" ref={ele => { areaRef.current = ele }}
             onClick={() => props.clickTheSprite()} onMouseMove={event => handleSpriteMove(event)}
             onMouseUp={() => props.pinTheSprite(false)}>
             <div className="absolute" style={{
-                top: props.spriteAt.y,
-                left: props.spriteAt.x,
-                rotate: `${props.spriteAt.deg}deg`,
+                top: spriteAt.y,
+                left: spriteAt.x,
+                rotate: `${spriteAt.deg}deg`,
                 transform: `scale(${props.spriteSize})`
             }}
             onMouseDown={() => props.pinTheSprite(true)} onMouseUp={() => props.pinTheSprite(false)}>
