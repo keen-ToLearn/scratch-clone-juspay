@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "./layout/Sidebar";
 import MidArea from "./layout/MidArea";
 import PreviewArea from "./layout/PreviewArea";
@@ -19,6 +19,7 @@ import CostumeArea from "./layout/CostumeArea";
 import { pinCombinationsUpdator, pinnedBlockExtractor, updateCombinationHelper } from "../utilities/combinationHelpers";
 import { categories } from "../utilities/categories";
 import { waitForSprite } from "../utilities/controlHandlers";
+import ReplayArea from "./layout/ReplayArea";
 
 let spriteAt = {
     x: 0,
@@ -26,9 +27,11 @@ let spriteAt = {
     deg: 0
 }
 
+let spriteSize = 1
+
 const CodeEditor = () => {
     // editor states like - Run, Stop, change Section
-    const [run, setRun] = useState(false);
+    const [flagClicked, setFlagClicked] = useState(false);
     const [section, setSection] = useState(0); // 0 - Code, 1 - Costume, 2 - Replay
 
     // costume states
@@ -48,7 +51,6 @@ const CodeEditor = () => {
     const [spritePinned, setSpritePinned] = useState(false);
 
     const [speak, setSpeak] = useState(null);
-    const [spriteSize, setSpriteSize] = useState(1);
 
     const [updateCount, setUpdateCount] = useState(0);
 
@@ -59,14 +61,45 @@ const CodeEditor = () => {
     const [combinations, setCombinations] = useState([]);
     const [combinationPinned, setCombinationPinned] = useState(null);
 
+    // replay section related
+    const [replayList, setReplayList] = useState([]);
+    const [replayId, setReplayId] = useState(0);
+
+    useEffect(() => {
+        if(spriteClicked || flagClicked) {
+            let combinationsWithWhen = combinations.filter(combo => {
+                if(combo.block[0].what == (flagClicked ? 'flag' : 'sprite'))
+                    return true
+                return false
+            })
+            if(combinationsWithWhen.length > 0) {
+                let combinedBlock = []
+                let maxSizeBlock = 0
+                combinationsWithWhen.forEach(combo => {
+                    maxSizeBlock = Math.max(maxSizeBlock, combo.block.length)
+                })
+
+                for(let i = 1; i < maxSizeBlock; i++)
+                    for(let j = 0; j < combinationsWithWhen.length; j++)
+                        if(i < combinationsWithWhen[j].block.length)
+                            combinedBlock.push(combinationsWithWhen[j].block[i])
+                
+                setReplayList(list => [ ...list, combinedBlock ])
+                runByBlockClick(combinedBlock, false)
+            }
+        }
+    }, [spriteClicked, flagClicked])
+
     // methods for editor states like Run, Section change
     const triggerRun = () => {
-        setRun(true)
         sessionStorage.setItem('run', true)
     }
     const stopRun = () => {
-        setRun(false)
         sessionStorage.setItem('run', false)
+        if(spriteClicked)
+            setSpriteClicked(false)
+        if(flagClicked)
+            setFlagClicked(false)
     }
 
     const changeSection = sec => { setSection(sec) }
@@ -97,8 +130,8 @@ const CodeEditor = () => {
     }
 
     const clickTheSprite = () => {
-        setSpriteClicked(true)
         triggerRun()
+        setSpriteClicked(true)
     }
 
     const pinTheSprite = should => { setSpritePinned(should) }
@@ -110,7 +143,10 @@ const CodeEditor = () => {
         } : speak))
     }
 
-    const resizeSprite = size => { setSpriteSize(size) }
+    const resizeSprite = size => {
+        spriteSize = size
+        setUpdateCount(updateCount => ((updateCount + 1) % 100))
+    }
 
     // block methods, that is being dragged
     const pickBlock = block => { setBlock(block) }
@@ -157,6 +193,9 @@ const CodeEditor = () => {
         setCombinations(updateCombinationHelper(updatedComboList, combo, block))
         handleBlockReleaseOutsideDrop()
     }
+
+    // replay section related methods
+    const updateReplayId = id => { setReplayId(id) }
 
     // action methods - motion, looks, control, events
     const spriteMotionTrigger = (func, checkRun) => {
@@ -216,6 +255,8 @@ const CodeEditor = () => {
     const runByBlockClick = async (block, repeat) => {
         if(!repeat)
             triggerRun()
+        if(repeat && !JSON.parse(sessionStorage.getItem('run')))
+            return
         
         let func = null
         let checkRun = repeat
@@ -265,11 +306,18 @@ const CodeEditor = () => {
                     </button>
                 </div>
                 
-                {section == 0 &&
-                <div className="ml-auto mr-5 cursor-pointer" onClick={triggerRun}>
+                {[0, 2].includes(section) &&
+                <div className="ml-auto mr-5 cursor-pointer" onClick={() => {
+                        if(section == 0) {
+                            triggerRun()
+                            setFlagClicked(true)
+                        }
+                        else
+                            runByBlockClick(replayList[replayId], false)
+                    }}>
                     <Icon name="flag" className="text-green-600" />
                 </div>}
-                {section == 0 &&
+                {[0, 2].includes(section) &&
                 <div className="mr-12 cursor-pointer" onClick={stopRun}>
                     <Icon name="stop" className="text-red-600" />
                 </div>}
@@ -314,7 +362,19 @@ const CodeEditor = () => {
                         inUse={inUse} changeCostume={to => changeCostume(to)} />
                 </div>
             </div> :
-            <div className="playground flex flex-row"></div>)}
+            <div className="playground flex flex-row">
+                <div className="flex-1 h-full overflow-auto flex flex-row bg-white border-t border-r border-gray-200 rounded-r-xl mr-1">
+                    <ReplayArea replayList={replayList} replayId={replayId}
+                        updateReplayId={id => updateReplayId(id)} />
+                </div>
+                <div className="w-1/3 overflow-hidden flex flex-row bg-white border-t border-l border-gray-200 rounded-l-xl ml-1">
+                    <PreviewArea costumes={costumes} inUse={inUse} spriteAt={spriteAt}
+                        updateSpritePos={(to, checkRun) => updateSpritePos(to, checkRun)}
+                        clickTheSprite={() => clickTheSprite()}
+                        pinTheSprite={should => pinTheSprite(should)} spritePinned={spritePinned}
+                        speak={speak} spriteSize={spriteSize} />
+                </div>
+            </div>)}
         </div>
     );
 }

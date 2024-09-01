@@ -48,7 +48,7 @@ const CostumeFunction = props => {
                 <span>switch costume to</span>
                 <input type="number" className="text-black text-center mx-2 functionInput"
                     value={costumeNo} onChange={event => changeCostume(Number(event.target.value))}
-                    onClick={event => event.stopPropagation()} min={0}/>
+                    onClick={event => event.stopPropagation()} min={0} readOnly={isCombo}/>
             </>}
         </button>
     );

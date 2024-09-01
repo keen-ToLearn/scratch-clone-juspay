@@ -52,7 +52,7 @@ const Move = props => {
                 } className="mx-2" />}
             <input type="number" className="text-black text-center mx-2 functionInput"
                 value={moveBy} onChange={event => updateMoveBy(Number(event.target.value))}
-                onClick={event => event.stopPropagation()} min={0}/>
+                onClick={event => event.stopPropagation()} min={0} readOnly={isCombo}/>
             <span>steps</span>
         </button>
     );

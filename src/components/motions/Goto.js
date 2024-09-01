@@ -50,11 +50,11 @@ const Goto = props => {
                 <span className="ml-1">x</span>
                 <input type="number" className="text-black text-center mx-2 functionInput"
                     value={go.x} onChange={event => goto('x', Number(event.target.value))}
-                    onClick={event => event.stopPropagation()}/>
+                    onClick={event => event.stopPropagation()} readOnly={isCombo}/>
                 <span>y</span>
                 <input type="number" className="text-black text-center mx-2 functionInput"
                     value={go.y} onChange={event => goto('y', Number(event.target.value))}
-                    onClick={event => event.stopPropagation()}/>
+                    onClick={event => event.stopPropagation()} readOnly={isCombo}/>
             </>}
         </button>
     );

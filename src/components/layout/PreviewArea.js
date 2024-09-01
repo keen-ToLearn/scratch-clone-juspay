@@ -12,6 +12,7 @@ const PreviewArea = props => {
     });
 
     const [spriteAt, setSpriteAt] = useState(props.spriteAt);
+    const [spriteSize, setSpriteSize] = useState(props.spriteSize);
 
     const handleSpriteMove = event => {
         let isInBounds = checkLimit(event.clientX, event.clientY, bounds)
@@ -45,18 +46,20 @@ const PreviewArea = props => {
 
     useEffect(() => {
         setSpriteAt(props.spriteAt)
-    }, [props.spriteAt])
+        setSpriteSize(props.spriteSize)
+    }, [props.spriteAt, props.spriteSize])
 
     return (
         <div className="flex-1 h-full relative" ref={ele => { areaRef.current = ele }}
-            onClick={() => props.clickTheSprite()} onMouseMove={event => handleSpriteMove(event)}
+            onMouseMove={event => handleSpriteMove(event)}
             onMouseUp={() => props.pinTheSprite(false)}>
             <div className="absolute" style={{
                 top: spriteAt.y,
                 left: spriteAt.x,
                 rotate: `${spriteAt.deg}deg`,
-                transform: `scale(${props.spriteSize})`
+                transform: `scale(${spriteSize})`
             }}
+            onClick={() => props.clickTheSprite()}
             onMouseDown={() => props.pinTheSprite(true)} onMouseUp={() => props.pinTheSprite(false)}>
                 <Costume />
                 {props.speak &&

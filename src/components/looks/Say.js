@@ -51,13 +51,13 @@ const Say = props => {
             <span>{props.what}</span>
             <input type="text" className="text-black text-center mx-2 funcInputText"
                 value={sayWhat} onChange={event => makeSay(event.target.value)}
-                onClick={event => event.stopPropagation()}/>
+                onClick={event => event.stopPropagation()} readOnly={isCombo}/>
             {props.timed &&
             <>
                 <span>for</span>
                 <input type="number" className="text-black text-center mx-2 functionInput"
                     value={sayFor} onChange={event => updateSayTime(Number(event.target.value))}
-                    onClick={event => event.stopPropagation()} min={0}/>
+                    onClick={event => event.stopPropagation()} min={0} readOnly={isCombo}/>
                 <span>seconds</span>
             </>}
         </button>

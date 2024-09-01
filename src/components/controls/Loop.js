@@ -41,7 +41,7 @@ const Loop = props => {
                 <span>repeat</span>
                 <input type="number" className="text-black text-center mx-2 functionInput"
                     value={repeatTime} onChange={event => modifyRepeatTime(Number(event.target.value))}
-                    onClick={event => event.stopPropagation()} min={0}/>
+                    onClick={event => event.stopPropagation()} min={0} readOnly={isCombo}/>
             </div> :
             <span className="px-3">forever</span>}
             {props.actionData.length == 0 ?

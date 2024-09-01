@@ -37,7 +37,7 @@ const Wait = props => {
             <span>wait</span>
             <input type="number" className="text-black text-center mx-2 functionInput"
                 value={wait} onChange={event => changeWait(Number(event.target.value))}
-                onClick={event => event.stopPropagation()} min={0}/>
+                onClick={event => event.stopPropagation()} min={0} readOnly={isCombo}/>
             <span>seconds</span>
         </button>
     );

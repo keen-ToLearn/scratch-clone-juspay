@@ -53,7 +53,7 @@ const Turn = props => {
                 <Icon name={props.dir == 'r' ? 'redo' : 'undo'} className="mx-2" />
                 <input type="number" className="text-black text-center mx-2 functionInput"
                     value={turnBy} onChange={event => updateMoveBy(Number(event.target.value))}
-                    onClick={event => event.stopPropagation()} min={0}/>
+                    onClick={event => event.stopPropagation()} min={0} readOnly={isCombo}/>
                 <span>degrees</span>
             </>}
         </button>
