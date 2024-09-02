@@ -14,8 +14,8 @@ const Move = props => {
     const updateMoveBy = by => { setMoveBy(by) }
 
     return(
-        <button className={`bg-${props.color} w-min text-white
-            px-3 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
+        <button className={`${props.color} w-min text-white
+            px-3 ${isCombo ? 'my-0' : 'my-3'} cursor-pointer rounded-md font-medium text-sm
             flex flex-row items-center functionButton ${isCombo ? 'border border-blue-200' : ''}`}
             onClick={() => {
                 if(!isCombo)
@@ -49,7 +49,7 @@ const Move = props => {
                     props.dir == 'r' ? 'arrow-right' :
                     (props.dir == 'l' ? 'arrow-left' :
                     (props.dir == 'u' ? 'arrow-up' : 'arrow-down'))
-                } className="mx-2" />}
+                } size={16} className="mx-2 mr-1" />}
             <input type="number" className="text-black text-center mx-2 functionInput"
                 value={moveBy} onChange={event => updateMoveBy(Number(event.target.value))}
                 onClick={event => event.stopPropagation()} min={0} readOnly={isCombo}/>

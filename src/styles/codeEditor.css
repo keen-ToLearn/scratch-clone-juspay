@@ -3,8 +3,8 @@ body {
 }
 
 ::-webkit-scrollbar {
-    height: 8px;
-    width: 8px;
+    height: 5px;
+    width: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -17,7 +17,7 @@ body {
 }
 
 .playground {
-    height: calc(100vh - 4rem);
+    height: calc(100vh - 3.5rem);
 }
 
 input[type=number] {
@@ -32,7 +32,7 @@ input::-webkit-inner-spin-button {
 }
 
 .functionInput {
-    width: 3rem;
+    width: 2.5rem;
     border-radius: 5px;
 }
 
@@ -41,7 +41,7 @@ input::-webkit-inner-spin-button {
 }
 
 .funcInputText {
-    width: 5rem;
+    width: 4rem;
     border-radius: 5px;
 }
 
@@ -51,7 +51,7 @@ input::-webkit-inner-spin-button {
 
 .functionButton {
     display: block;
-    height: 36px;
+    height: 30px;
 }
 
 .functionButton:focus:active {

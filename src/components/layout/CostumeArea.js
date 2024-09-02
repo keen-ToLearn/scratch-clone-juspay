@@ -19,7 +19,7 @@ const CostumeArea = props => {
         return(
             <div key={i} className={`w-1/5 overflow-hidden border-2 ${props.inUse == i ? 'border-blue-300' : ''}
                 rounded-lg cursor-pointer`} onClick={() => props.changeCostume(i)}>
-                <div className="transform scale-50">
+                <div style={{ transform: 'scale(0.46)' }}>
                     <Unique />
                 </div>
             </div>
@@ -31,7 +31,7 @@ const CostumeArea = props => {
             <div className={`w-1/5 border-2 border-blue-400 bg-blue-50
                 rounded-lg cursor-pointer flex flex-row items-center justify-center`}
                 onClick={() => { fileRef.current.click() }}>
-                <Icon name="plus" size={45} className="text-blue-500" />
+                <Icon name="plus" size={38} className="text-blue-500" />
             </div>
             <input type="file" accept="image/*" style={{ display: 'none' }}
                 ref={input => { fileRef.current = input }}

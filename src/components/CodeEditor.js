@@ -277,32 +277,32 @@ const CodeEditor = () => {
 
     return (
         <div className="bg-blue-100 font-sans h-screen">
-            <div className="h-12 flex flex-row items-center">
-                <div className="self-stretch mt-2 items-center">
+            <div className="h-10 flex flex-row items-center">
+                <div className="self-stretch mt-1 items-center">
                     <button type="button" className={`h-full px-3 rounded-t-lg border-t-2
-                        border-r-2 flex flex-row items-center text-${section == 0 ? 'purple-500' : 'gray-400'}
-                        bg-${section == 0 ? 'white' : 'gray-100'}`}
+                        border-r-2 flex flex-row items-center ${section == 0 ? 'text-purple-500' : 'text-gray-400'}
+                        ${section == 0 ? 'bg-white' : 'bg-gray-100'}`}
                         onClick={() => changeSection(0)}>
                         <Icon name="code" size={15} className="mr-1" />
-                        <span className="font-semibold">Code</span>
+                        <span className="font-semibold text-sm">Code</span>
                     </button>
                 </div>
-                <div className="self-stretch mt-2 items-center">
+                <div className="self-stretch mt-1 items-center">
                     <button type="button" className={`h-full px-3 rounded-t-lg border-t-2
-                        border-r-2 flex flex-row items-center text-${section == 1 ? 'purple-500' : 'gray-400'}
-                        bg-${section == 1 ? 'white' : 'gray-100'}`}
+                        border-r-2 flex flex-row items-center ${section == 1 ? 'text-purple-500' : 'text-gray-400'}
+                        ${section == 1 ? 'bg-white' : 'bg-gray-100'}`}
                         onClick={() => changeSection(1)}>
                         <Icon name="paint-brush" size={15} className="mr-1" />
-                        <span className="font-semibold">Costume</span>
+                        <span className="font-semibold text-sm">Costume</span>
                     </button>
                 </div>
-                <div className="self-stretch mt-2 items-center">
+                <div className="self-stretch mt-1 items-center">
                     <button type="button" className={`h-full px-3 rounded-t-lg border-t-2
-                        border-r-2 flex flex-row items-center text-${section == 2 ? 'purple-500' : 'gray-400'}
-                        bg-${section == 2 ? 'white' : 'gray-100'}`}
+                        border-r-2 flex flex-row items-center ${section == 2 ? 'text-purple-500' : 'text-gray-400'}
+                        ${section == 2 ? 'bg-white' : 'bg-gray-100'}`}
                         onClick={() => changeSection(2)}>
                         <Icon name="stream" size={15} className="mr-1" />
-                        <span className="font-semibold">Replay</span>
+                        <span className="font-semibold text-sm">Replay</span>
                     </button>
                 </div>
                 

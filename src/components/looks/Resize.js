@@ -13,8 +13,8 @@ const Resize = props => {
     const resizeBy = by => { setSizeUp(by) }
 
     return(
-        <button className={`bg-${props.color} w-min text-white ${isCombo ? 'border border-purple-200' : ''}
-            px-3 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
+        <button className={`${props.color} w-min text-white ${isCombo ? 'border border-purple-200' : ''}
+            px-3 ${isCombo ? 'my-0' : 'my-3'} cursor-pointer rounded-md font-medium text-sm
             flex flex-row items-center whitespace-nowrap functionButton`}
             onClick={() => {
                 if(!isCombo)

@@ -14,8 +14,8 @@ const Turn = props => {
     const updateMoveBy = by => { setTurnBy(by) }
 
     return(
-        <button className={`bg-${props.color} w-min text-white
-            px-3 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
+        <button className={`${props.color} w-min text-white
+            px-3 ${isCombo ? 'my-0' : 'my-3'} cursor-pointer rounded-md font-medium text-sm
             flex flex-row items-center functionButton ${isCombo ? 'border border-blue-200' : ''}`}
             onClick={() => {
                 if(!isCombo)
@@ -50,7 +50,7 @@ const Turn = props => {
             </> :
             <>
                 <span>turn</span>
-                <Icon name={props.dir == 'r' ? 'redo' : 'undo'} className="mx-2" />
+                <Icon name={props.dir == 'r' ? 'redo' : 'undo'} size={16} className="mx-2 mr-1" />
                 <input type="number" className="text-black text-center mx-2 functionInput"
                     value={turnBy} onChange={event => updateMoveBy(Number(event.target.value))}
                     onClick={event => event.stopPropagation()} min={0} readOnly={isCombo}/>

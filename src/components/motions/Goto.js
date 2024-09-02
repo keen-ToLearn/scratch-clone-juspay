@@ -16,9 +16,9 @@ const Goto = props => {
     const goto = (where, by) => { setGo({ ...go, [where]: by }) }
 
     return(
-        <button className={`bg-${props.color} w-min text-white ${isCombo ? 'border border-blue-200' : ''}
-            px-3 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
-            flex flex-row items-center functionButton whitespace-nowrap`}
+        <button className={`${props.color} w-min text-white ${isCombo ? 'border border-blue-200' : ''}
+            px-3 ${isCombo ? 'my-0' : 'my-3'} cursor-pointer rounded-md font-medium
+            flex flex-row items-center functionButton whitespace-nowrap text-sm`}
             onClick={() => {
                 if(!isCombo)
                     spriteMotionTrigger({

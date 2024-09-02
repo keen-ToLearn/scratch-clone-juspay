@@ -14,8 +14,8 @@ const Loop = props => {
     const modifyRepeatTime = change => { setRepeatTime(change) }
 
     return(
-        <button className={`bg-${props.color} w-min text-white
-            py-2 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
+        <button className={`${props.color} w-min text-white
+            py-2 ${isCombo ? 'my-0' : 'my-3'} cursor-pointer rounded-md font-medium text-sm
             flex flex-col whitespace-nowrap loopButton ${isCombo ? 'border border-red-200' : ''}`}
             onMouseDown={event => {
                 loopTimerRef.current = setTimeout(() => {

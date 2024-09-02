@@ -16,8 +16,8 @@ const Say = props => {
     const updateSayTime = forTime => { setSayFor(forTime) }
 
     return(
-        <button className={`bg-${props.color} w-min text-white
-            px-3 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
+        <button className={`${props.color} w-min text-white text-sm
+            px-3 ${isCombo ? 'my-0' : 'my-3'} cursor-pointer rounded-md font-medium
             flex flex-row items-center functionButton ${isCombo ? 'border border-purple-200' : ''}`}
             onClick={() => {
                 if(!isCombo)

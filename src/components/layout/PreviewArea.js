@@ -64,7 +64,7 @@ const PreviewArea = props => {
                 <Costume />
                 {props.speak &&
                     <div className={`absolute rounded-xl px-4 py-2 border-4 border-gray-300
-                        border-${props.speak.act == 'say' ? 'solid' : 'dotted'}
+                        ${props.speak.act == 'say' ? 'border-solid' : 'border-dotted'}
                         top-0 left-full`}>
                         <span>{props.speak.speakWhat}</span>
                     </div>}

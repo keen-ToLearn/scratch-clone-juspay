@@ -10,8 +10,8 @@ export const WhenFlag = ({ color, index }) => {
     const flagTimerRef = useRef(null);
 
     return(
-        <button className={`bg-${color} w-min text-white ${isCombo ? 'border border-yellow-200' : ''}
-            px-3 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
+        <button className={`${color} w-min text-white ${isCombo ? 'border border-yellow-200' : ''}
+            px-3 ${isCombo ? 'my-0' : 'my-3'} cursor-pointer rounded-md font-medium text-sm
             flex flex-row items-center whitespace-nowrap functionButton`}
             onMouseDown={event => {
                 flagTimerRef.current = setTimeout(() => {
@@ -29,7 +29,7 @@ export const WhenFlag = ({ color, index }) => {
                     updateComboPin(index, false, true)
             }}>
             <span>when</span>
-            <Icon name="flag" className="text-green-600 mx-2" />
+            <Icon name="flag" size={16} className="text-green-600 mx-2" />
             <span>clicked</span>
         </button>
     );
@@ -42,8 +42,8 @@ export const WhenSprite = ({ color, index }) => {
     const spriteTimerRef = useRef(null);
 
     return(
-        <button className={`bg-${color} w-min text-white ${isCombo ? 'border border-yellow-200' : ''}
-            px-3 my-${isCombo ? 0 : 3} cursor-pointer rounded-md font-medium
+        <button className={`${color} w-min text-white ${isCombo ? 'border border-yellow-200' : ''}
+            px-3 ${isCombo ? 'my-0' : 'my-3'} cursor-pointer rounded-md font-medium text-sm
             flex flex-row items-center whitespace-nowrap functionButton`}
             onMouseDown={event => {
                 spriteTimerRef.current = setTimeout(() => {

@@ -1,14 +1,14 @@
 export const categoryColorPicker = {
-    move: 'blue-500',
-    turn: 'blue-500',
-    goto: 'blue-500',
-    say: 'purple-400',
-    think: 'purple-400',
-    costume: 'purple-400',
-    resize: 'purple-400',
-    flag: 'yellow-400',
-    sprite: 'yellow-400',
-    wait: 'yellow-600',
-    repeat: 'yellow-600',
-    forever: 'yellow-600'
+    move: 'bg-blue-500',
+    turn: 'bg-blue-500',
+    goto: 'bg-blue-500',
+    say: 'bg-purple-400',
+    think: 'bg-purple-400',
+    costume: 'bg-purple-400',
+    resize: 'bg-purple-400',
+    flag: 'bg-yellow-400',
+    sprite: 'bg-yellow-400',
+    wait: 'bg-yellow-600',
+    repeat: 'bg-yellow-600',
+    forever: 'bg-yellow-600'
 }
